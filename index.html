@@ -3,89 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vals Revision - Achieving First Class in a Seamless Way</title>
+    <title>TSU CBT Practice</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <div class="logo">VALS REVISION</div>
-        <div class="motto">Achieving First Class in a Seamless Way</div>
-    </header>
+    <div class="container">
+        <h1>TSU CBT PRACTICE</h1>
 
-    <section class="welcome">
-        <h1>Welcome to Vals Revision</h1>
-        <p>The #1 Student Friendly CBT Practice Platform for TSU 100L & 200L Students</p>
-        <p><b>Founder:</b> Valentine Godson Govina</p>
-        <p><b>University:</b> Taraba State University - CBT Past Questions & Answers</p>
-    </section>
+        <!-- MODE SELECT -->
+        <div class="mode-select">
+            <button onclick="setMode('single')" class="active">Single Player</button>
+            <button onclick="setMode('two')">Two Players</button>
+        </div>
 
-    <section class="mode-select">
-        <h2>Select Mode</h2>
-        <button onclick="setMode('single')">Single Player</button>
-        <button onclick="setMode('two')">Two Players</button>
-    </section>
+        <!-- TIME SELECT -->
+        <div class="time-select">
+            <button onclick="setTime(600)" class="active">10 Minutes</button>
+            <button onclick="setTime(900)">15 Minutes</button>
+            <button onclick="setTime(1200)">20 Minutes</button>
+        </div>
 
-    <section class="time-select">
-        <h2>Select Timer</h2>
-        <button onclick="setTime(120)">2 Minutes</button>
-        <button onclick="setTime(240)">4 Minutes</button>
-        <button onclick="setTime(360)">6 Minutes</button>
-        <button onclick="setTime(480)">8 Minutes</button>
-        <button onclick="setTime(600)">10 Minutes</button>
-    </section>
-
-    <section class="courses">
+        <!-- COURSE SELECT -->
         <h2>Select Course</h2>
-        <div class="course-grid">
-            <div class="course-card" onclick="loadCourse('gst')">GST</div>
-            <div class="course-card" onclick="loadCourse('physics')">PHYSICS</div>
-            <div class="course-card" onclick="loadCourse('chemistry')">CHEMISTRY</div>
-            <div class="course-card" onclick="loadCourse('biology')">BIOLOGY</div>
-            <div class="course-card" onclick="loadCourse('mathematics')">MATHEMATICS</div>
+        <div class="courses">
+            <button onclick="loadCourse('gst')">GST</button>
+            <button onclick="loadCourse('physics')">PHYSICS</button>
+            <button onclick="loadCourse('chemistry')">CHEMISTRY</button>
+            <button onclick="loadCourse('biology')">BIOLOGY</button>
+            <button onclick="loadCourse('mathematics')">MATHEMATICS</button>
         </div>
-    </section>
 
-    <section id="topics-section" class="hidden">
-        <h2 id="course-title"></h2>
-        <div id="semester101" class="semester">
-            <h3>First Semester - 101</h3>
-            <div class="topics" id="topics101"></div>
+        <!-- TOPICS SECTION -->
+        <div id="topics-section" class="hidden">
+            <h2 id="course-title"></h2>
+            <button onclick="goBack()">← Back to Courses</button>
+            <h3>100 LEVEL - FIRST SEMESTER</h3>
+            <div id="topics101"></div>
+            <h3>100 LEVEL - SECOND SEMESTER</h3>
+            <div id="topics102"></div>
         </div>
-        <div class="semester">
-            <h3>Second Semester - 102</h3>
-            <div class="topics" id="topics102"></div>
-        </div>
-        <button onclick="goBack()">Back to Courses</button>
-    </section>
 
-    <section id="quiz-section" class="hidden">
-        <div class="quiz-header">
+        <!-- QUIZ SECTION -->
+        <div id="quiz-section" class="hidden">
             <h3 id="quiz-topic"></h3>
-            <div class="timer">Time: <span id="timer">10:00</span></div>
-            <div class="score">Score: <span id="score">0</span>/<span id="total">0</span></div>
+            <div class="quiz-header">
+                <p>Time: <span id="timer">10:00</span></p>
+                <p>Score: <span id="score">0</span> / <span id="total">0</span></p>
+            </div>
+            <div id="question-box"></div>
+            <button onclick="exitQuiz()">Exit Quiz</button>
         </div>
-        <div id="question-box"></div>
-        <button id="next-btn" onclick="nextQuestion()">Next</button>
-        <button onclick="exitQuiz()">Exit Quiz</button>
-    </section>
 
-    <section id="result-section" class="hidden">
-        <h2>Quiz Completed!</h2>
-        <p>Your Score: <span id="final-score"></span></p>
-        <button onclick="restartQuiz()">Try Again</button>
-        <button onclick="goBack()">Back to Topics</button>
-    </section>
+        <!-- RESULT SECTION -->
+        <div id="result-section" class="hidden">
+            <h2>Quiz Completed!</h2>
+            <p>Your Score: <span id="final-score"></span></p>
+            <button onclick="restartQuiz()">Restart</button>
+            <button onclick="goBack()">Go Back</button>
+        </div>
+    </div>
 
-    <footer>
-        <p>Taraba State University Formats of CBT Questions and Answers for 100L & 200L Students</p>
-        <p>© 2026 Vals Revision by Valentine Godson Govina</p>
-    </footer>
 
+    <!-- 1. DATA FILES FIRST -->
     <script src="data-gst.js"></script>
     <script src="data-physics.js"></script>
     <script src="data-chemistry.js"></script>
     <script src="data-biology.js"></script>
     <script src="data-mathematics.js"></script>
+
+    <!-- 2. MAIN SCRIPT LAST -->
     <script src="script.js"></script>
 </body>
 </html>
