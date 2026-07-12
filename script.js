@@ -25,7 +25,13 @@ function loadCourse(course) {
     document.getElementById('topics-section').classList.remove('hidden');
     document.getElementById('course-title').innerText = course.toUpperCase() + " COURSES";
 
-    let data = window[course + 'Data'];
+    let data = window[course + 'Data']; // THIS LINE READS data-physics.js
+
+    if(!data){
+        alert("Error: " + course + "Data not found. Check data-" + course + ".js file");
+        return;
+    }
+
     loadTopics(data['101'], 'topics101');
     loadTopics(data['102'], 'topics102');
 }
@@ -33,12 +39,24 @@ function loadCourse(course) {
 function loadTopics(topics, id) {
     let container = document.getElementById(id);
     container.innerHTML = '';
+    if(!topics || topics.length === 0){
+        container.innerHTML = "<p>No topics found. Add questions to data file</p>";
+        return;
+    }
     topics.forEach(topic => {
         let btn = document.createElement('button');
-        btn.innerText = topic.name;
+        btn.innerText = topic.name + " - " + topic.questions.length + " Qs";
         btn.onclick = () => startQuiz(topic.questions, topic.name);
         container.appendChild(btn);
     });
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
 }
 
 function startQuiz(questions, topicName) {
@@ -49,16 +67,9 @@ function startQuiz(questions, topicName) {
     document.getElementById('quiz-section').classList.remove('hidden');
     document.getElementById('quiz-topic').innerText = topicName;
     document.getElementById('total').innerText = currentQuestions.length;
+    document.getElementById('score').innerText = score;
     showQuestion();
     startTimer(selectedTime);
-}
-
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
 }
 
 function showQuestion() {
@@ -77,7 +88,7 @@ function showQuestion() {
 function checkAnswer(selected, correct) {
     if(selected === correct) score++;
     document.getElementById('score').innerText = score;
-    setTimeout(nextQuestion, 300);
+    setTimeout(nextQuestion, 400);
 }
 
 function nextQuestion() {
