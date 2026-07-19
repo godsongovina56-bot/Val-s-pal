@@ -20,7 +20,7 @@ function setTime(seconds) {
 }
 
 function loadCourse(course) {
-    currentCourse = course;
+    currentCourse = course.toLowerCase();
     document.querySelector('.courses').classList.add('hidden');
     document.querySelector('.mode-select').classList.add('hidden');
     document.querySelector('.time-select').classList.add('hidden');
@@ -28,13 +28,16 @@ function loadCourse(course) {
     document.getElementById('course-title').innerText = course.toUpperCase() + " COURSES";
 
     let data;
-    if(course === 'physics') data = physicsData;
-    if(course === 'chemistry') data = chemistryData;
-    if(course === 'biology') data = biologyData;
-    if(course === 'mathematics') data = mathematicsData;
-    if(course === 'gst') data = gstData;
+    if(currentCourse === 'physics') data = physicsData;
+    if(currentCourse === 'chemistry') data = chemistryData;
+    if(currentCourse === 'biology') data = biologyData;
+    if(currentCourse === 'mathematics') data = mathematicsData;
+    if(currentCourse === 'gst') data = gstData;
 
-    if(!data){ alert("Error: " + course + "Data not found. Check data-" + course + ".js file"); return; }
+    if(!data){
+        alert("Error: " + course + "Data not found. \nCheck 1. File name: data-" + currentCourse + ".js \n2. First line: const " + currentCourse + "Data");
+        return;
+    }
 
     loadTopics(data['101'], 'topics101');
     loadTopics(data['102'], 'topics102');
@@ -43,7 +46,10 @@ function loadCourse(course) {
 function loadTopics(topics, id) {
     let container = document.getElementById(id);
     container.innerHTML = '';
-    if(!topics || topics.length === 0){ container.innerHTML = "<p>No topics yet. Add questions</p>"; return; }
+    if(!topics || topics.length === 0){
+        container.innerHTML = "<p style='color:gray'>No topics added yet</p>";
+        return;
+    }
     topics.forEach(topic => {
         let btn = document.createElement('button');
         btn.innerText = topic.name + " - " + topic.questions.length + " Qs";
@@ -52,11 +58,18 @@ function loadTopics(topics, id) {
     });
 }
 
-function shuffleArray(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
 
 function startQuiz(questions, topicName) {
     currentQuestions = shuffleArray([...questions]);
-    currentQ = 0; score = 0;
+    currentQ = 0;
+    score = 0;
     document.getElementById('topics-section').classList.add('hidden');
     document.getElementById('quiz-section').classList.remove('hidden');
     document.getElementById('quiz-topic').innerText = topicName;
@@ -69,15 +82,75 @@ function startQuiz(questions, topicName) {
 function showQuestion() {
     let q = currentQuestions[currentQ];
     let shuffledOptions = shuffleArray([...q.options]);
-    let optionsHtml = shuffledOptions.map(opt => `<button onclick="checkAnswer('${opt.replace(/'/g, "\\'")}', '${q.a.replace(/'/g, "\\'")}')">${opt}</button>`).join('');
-    document.getElementById('question-box').innerHTML = `<h4>Question ${currentQ+1} of ${currentQuestions.length}</h4><p style="font-size:18px">${q.q}</p><div class="options">${optionsHtml}</div>`;
+    let optionsHtml = shuffledOptions.map(opt =>
+        `<button onclick="checkAnswer('${opt.replace(/'/g, "\\'")}', '${q.a.replace(/'/g, "\\'")}')">${opt}</button>`
+    ).join('');
+
+    document.getElementById('question-box').innerHTML = `
+        <h4>Question ${currentQ+1} of ${currentQuestions.length}</h4>
+        <p style="font-size:18px">${q.q}</p>
+        <div class="options">${optionsHtml}</div>
+    `;
 }
 
-function checkAnswer(selected, correct) { if(selected === correct) score++; document.getElementById('score').innerText = score; setTimeout(nextQuestion, 400); }
-function nextQuestion() { currentQ++; if(currentQ < currentQuestions.length) showQuestion(); else endQuiz(); }
-function startTimer(seconds) { timeLeft = seconds; clearInterval(timer); updateTimerDisplay(); timer = setInterval(() => { timeLeft--; updateTimerDisplay(); if(timeLeft <= 0) { clearInterval(timer); endQuiz(); } }, 1000); }
-function updateTimerDisplay() { let min = Math.floor(timeLeft/60); let sec = timeLeft%60; document.getElementById('timer').innerText = `${min}:${sec < 10? '0' : ''}${sec}`; }
-function endQuiz() { clearInterval(timer); document.getElementById('quiz-section').classList.add('hidden'); document.getElementById('result-section').classList.remove('hidden'); document.getElementById('final-score').innerText = `${score} / ${currentQuestions.length}`; }
-function restartQuiz() { document.getElementById('result-section').classList.add('hidden'); startQuiz(currentQuestions, document.getElementById('quiz-topic').innerText); }
-function exitQuiz() { clearInterval(timer); document.getElementById('quiz-section').classList.add('hidden'); document.getElementById('topics-section').classList.remove('hidden'); }
-function goBack() { document.getElementById('topics-section').classList.add('hidden'); document.querySelector('.courses').classList.remove('hidden'); document.querySelector('.mode-select').classList.remove('hidden'); document.querySelector('.time-select').classList.remove('hidden'); }
+function checkAnswer(selected, correct) {
+    if(selected === correct) {
+        score++;
+        document.getElementById('score').innerText = score;
+    }
+    setTimeout(nextQuestion, 500);
+}
+
+function nextQuestion() {
+    currentQ++;
+    if(currentQ < currentQuestions.length) {
+        showQuestion();
+    } else {
+        endQuiz();
+    }
+}
+
+function startTimer(seconds) {
+    timeLeft = seconds;
+    clearInterval(timer);
+    updateTimerDisplay();
+    timer = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        if(timeLeft <= 0) {
+            clearInterval(timer);
+            endQuiz();
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    let min = Math.floor(timeLeft/60);
+    let sec = timeLeft%60;
+    document.getElementById('timer').innerText = `${min}:${sec < 10? '0' : ''}${sec}`;
+}
+
+function endQuiz() {
+    clearInterval(timer);
+    document.getElementById('quiz-section').classList.add('hidden');
+    document.getElementById('result-section').classList.remove('hidden');
+    document.getElementById('final-score').innerText = `${score} / ${currentQuestions.length}`;
+}
+
+function restartQuiz() {
+    document.getElementById('result-section').classList.add('hidden');
+    startQuiz(currentQuestions, document.getElementById('quiz-topic').innerText);
+}
+
+function exitQuiz() {
+    clearInterval(timer);
+    document.getElementById('quiz-section').classList.add('hidden');
+    document.getElementById('topics-section').classList.remove('hidden');
+}
+
+function goBack() {
+    document.getElementById('topics-section').classList.add('hidden');
+    document.querySelector('.courses').classList.remove('hidden');
+    document.querySelector('.mode-select').classList.remove('hidden');
+    document.querySelector('.time-select').classList.remove('hidden');
+}
